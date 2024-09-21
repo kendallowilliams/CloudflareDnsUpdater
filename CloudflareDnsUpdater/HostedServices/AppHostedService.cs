@@ -43,12 +43,14 @@ namespace CloudflareDnsUpdater.HostedServices
                     record.Content = ipAddress;
                     await cloudflareService.UpdateDnsRecord(record);
                 }
-
-                hostApplicationLifetime.StopApplication();
             }
             catch(Exception ex)
             {
                 logger.LogError(ex, null);
+            }
+            finally
+            {
+                hostApplicationLifetime.StopApplication();
             }
         }
 
