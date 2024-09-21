@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.Eventing.Reader;
 using System.Net.Http.Headers;
 using System.Reflection;
 
@@ -26,6 +27,8 @@ namespace GoogleDNSUpdater
 
                               builder.AddUserSecrets(assembly);
                           }
+                          builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json")
+                                 .AddJsonFile($"appsettings.json");
                       })
                       .ConfigureServices((builder, services) =>
                       {
