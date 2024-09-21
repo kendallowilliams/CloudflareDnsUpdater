@@ -27,7 +27,8 @@ namespace GoogleDNSUpdater
 
                               builder.AddUserSecrets(assembly);
                           }
-                          builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json")
+                          builder.SetBasePath(env.ContentRootPath)
+                                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json")
                                  .AddJsonFile($"appsettings.json");
                       })
                       .ConfigureServices((builder, services) =>
