@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.Eventing.Reader;
+using Serilog;
 using System.Net.Http.Headers;
 using System.Reflection;
 
@@ -16,6 +16,10 @@ namespace GoogleDNSUpdater
     {
         static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+              .WriteTo.File(@"logs\log-.txt", rollingInterval: RollingInterval.Hour)
+              .CreateLogger();
+
             await Host.CreateDefaultBuilder()
                       .ConfigureAppConfiguration((context, builder) =>
                       {
@@ -53,6 +57,7 @@ namespace GoogleDNSUpdater
                           {
                               builder.ClearProviders();
                               builder.AddConsole();
+                              builder.AddSerilog();
                           });
                       })
                       .Build()
