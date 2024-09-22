@@ -39,14 +39,17 @@ namespace CloudflareDnsUpdater.Services
             return await response.Content.ReadFromJsonAsync<ListDnsRecordsResponse>(jsonSerializerOptions);
         }
 
-        public async Task UpdateDnsRecord(DnsRecord record)
+        public async Task<UpdateDnsRecordResponse?> UpdateDnsRecord(DnsRecord dnsRecord)
         {
-            string relativePath = $"zones/{settings.ZoneId}/dns_records/{record.Id}";
-            var content = JsonContent.Create(new { content = record.Content });
+            string relativePath = $"zones/{settings.ZoneId}/dns_records/{dnsRecord.Id}",
+                comment = $"Last Modified: CloudflareDnsUpdater ({DateTime.Now})";
+            var content = JsonContent.Create(new { content = dnsRecord.Content, comment });
             var client = httpClientFactory.CreateClient("Cloudflare");
             var response = await client.PatchAsync(relativePath, content);
 
             response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<UpdateDnsRecordResponse>(jsonSerializerOptions);
         }
     }
 }

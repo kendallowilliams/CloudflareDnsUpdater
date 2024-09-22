@@ -23,15 +23,16 @@ namespace GoogleDNSUpdater
                       {
                           var env = context.HostingEnvironment;
 
+                          builder.SetBasePath(env.ContentRootPath)
+                                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json")
+                                 .AddJsonFile($"appsettings.json");
+
                           if (env.IsDevelopment())
                           {
                               var assembly = Assembly.Load(new AssemblyName(env.ApplicationName));
 
                               builder.AddUserSecrets(assembly);
                           }
-                          builder.SetBasePath(env.ContentRootPath)
-                                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json")
-                                 .AddJsonFile($"appsettings.json");
                       })
                       .ConfigureServices((builder, services) =>
                       {

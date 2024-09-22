@@ -5,6 +5,6 @@ namespace CloudflareDnsUpdater.Services.Interfaces
     public interface ICloudflareService
     {
         Task<ListDnsRecordsResponse?> GetDnsRecords();
-        Task UpdateDnsRecord(DnsRecord record);
+        Task<UpdateDnsRecordResponse?> UpdateDnsRecord(DnsRecord dnsRecord);
     }
 }

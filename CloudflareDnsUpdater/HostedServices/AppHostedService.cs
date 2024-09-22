@@ -1,8 +1,12 @@
-﻿using CloudflareDnsUpdater.Models;
+﻿using CloudflareDnsUpdater.Exceptions;
+using CloudflareDnsUpdater.Models;
 using CloudflareDnsUpdater.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using static CloudflareDnsUpdater.Enums;
 
 namespace CloudflareDnsUpdater.HostedServices
 {
@@ -30,20 +34,38 @@ namespace CloudflareDnsUpdater.HostedServices
             logger.LogInformation($"{nameof(CloudflareDnsUpdater)}->{nameof(StartAsync)} Started: {DateTime.Now}");
             try
             {
-                var ipTask = httpService.GetIpAddress();
-                var dnsTask = cloudflareService.GetDnsRecords();
-                await Task.WhenAll(ipTask, dnsTask);
-                var dnsRecords = dnsTask.Result?.DnsRecords.Where(record => record.Type == "A")
-                    ?? Enumerable.Empty<DnsRecord>();
-                var ipAddress = ipTask.Result;
+                var ipAddress = await httpService.GetIpAddress();
+                var getDnsRecordsResponse = await cloudflareService.GetDnsRecords();
 
-                if (!dnsRecords.Any(record => record.Content == ipAddress))
+                if (getDnsRecordsResponse is null)
                 {
-                    var record = dnsRecords.First();
+                    throw new CloudflareException("GetDnsRecords failed for an unknown reason.");
+                }
 
-                    logger.LogInformation($"Old IP Address: {record.Content}, Latest IP Address: {ipAddress}");
-                    record.Content = ipAddress;
-                    await cloudflareService.UpdateDnsRecord(record);
+                if (!getDnsRecordsResponse.Success)
+                {
+                    throw new CloudflareException(JsonSerializer.Serialize(getDnsRecordsResponse.Errors));
+                }
+
+                var dnsRecords = getDnsRecordsResponse.DnsRecords.Where(record => record.Type == DnsRecordTypes.A);
+                var needsUpdate = dnsRecords.All(dnsRecord => dnsRecord.Content != ipAddress);
+                var dnsRecord = dnsRecords.FirstOrDefault() ?? new DnsRecord() { Content = ipAddress };
+
+                logger.LogInformation($"Old IP Address: {dnsRecord?.Content}, Latest IP Address: {ipAddress}");
+
+                if (needsUpdate)
+                {
+                    var updateDnsRecordResponse = await cloudflareService.UpdateDnsRecord(dnsRecord);
+
+                    if (updateDnsRecordResponse is null)
+                    {
+                        throw new CloudflareException("UpdateDnsRecord failed for an unknown reason.");
+                    }
+
+                    if (!updateDnsRecordResponse.Success)
+                    {
+                        throw new CloudflareException(JsonSerializer.Serialize(updateDnsRecordResponse.Errors));
+                    }
                 }
             }
             catch(Exception ex)
