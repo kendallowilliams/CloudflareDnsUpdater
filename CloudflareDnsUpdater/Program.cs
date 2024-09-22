@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Net.Http.Headers;
 using System.Reflection;
-using Serilog.Settings.Configuration;
 
 namespace GoogleDNSUpdater
 {
@@ -45,6 +44,7 @@ namespace GoogleDNSUpdater
 
                           services.AddTransient<ICloudflareService, CloudflareService>();
                           services.AddTransient<IHttpService, HttpService>();
+                          services.AddTransient<IProcessorService, ProcessorService>();
                           services.AddHostedService<AppHostedService>();
                           services.Configure<CloudflareSettings>(configuration.GetSection(nameof(CloudflareSettings)));
                           services.AddHttpClient("Cloudflare", httpClient =>
