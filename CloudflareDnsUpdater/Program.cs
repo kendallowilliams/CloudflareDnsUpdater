@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Net.Http.Headers;
 using System.Reflection;
+using Serilog.Settings.Configuration;
 
 namespace GoogleDNSUpdater
 {
@@ -16,9 +17,6 @@ namespace GoogleDNSUpdater
     {
         static async Task Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-              .WriteTo.File(@"logs\log-.txt", rollingInterval: RollingInterval.Hour)
-              .CreateLogger();
 
             await Host.CreateDefaultBuilder()
                       .ConfigureAppConfiguration((context, builder) =>
@@ -39,6 +37,10 @@ namespace GoogleDNSUpdater
                       {
                           var configuration = builder.Configuration;
                           var cloudflareSettings = configuration.GetSection(nameof(CloudflareSettings)).Get<CloudflareSettings>();
+                          var logger = new LoggerConfiguration()
+                             .ReadFrom
+                             .Configuration(configuration)
+                             .CreateLogger();
 
                           services.AddTransient<ICloudflareService, CloudflareService>();
                           services.AddTransient<IHttpService, HttpService>();
@@ -57,7 +59,7 @@ namespace GoogleDNSUpdater
                           {
                               builder.ClearProviders();
                               builder.AddConsole();
-                              builder.AddSerilog();
+                              builder.AddSerilog(logger);
                           });
                       })
                       .Build()
