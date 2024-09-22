@@ -23,11 +23,11 @@
     </None>
   </ItemGroup>
 	
-	<ItemGroup>
-		<Content Include="appsettings.*.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<DependentUpon>appsettings.json</DependentUpon>
-		</Content>
-	</ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.*.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+  </ItemGroup>
 
 </Project>
