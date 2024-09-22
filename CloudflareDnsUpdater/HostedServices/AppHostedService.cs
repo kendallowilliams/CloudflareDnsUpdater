@@ -1,10 +1,6 @@
-﻿using CloudflareDnsUpdater.Exceptions;
-using CloudflareDnsUpdater.Models;
-using CloudflareDnsUpdater.Services.Interfaces;
+﻿using CloudflareDnsUpdater.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using static CloudflareDnsUpdater.Enums;
 
 namespace CloudflareDnsUpdater.HostedServices
 {
