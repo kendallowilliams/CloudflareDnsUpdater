@@ -23,7 +23,7 @@ namespace GoogleDNSUpdater
                       {
                           var env = context.HostingEnvironment;
 
-                          if (!env.IsDevelopment())
+                          if (env.IsDevelopment())
                           {
                               var assembly = Assembly.Load(new AssemblyName(env.ApplicationName));
 
