@@ -2,6 +2,7 @@
 using CloudflareDnsUpdater.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace CloudflareDnsUpdater.HostedServices
 {
@@ -26,6 +27,7 @@ namespace CloudflareDnsUpdater.HostedServices
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            logger.LogInformation($"{nameof(CloudflareDnsUpdater)}->{nameof(StartAsync)} Started: {DateTime.Now}");
             try
             {
                 var ipTask = httpService.GetIpAddress();
@@ -52,10 +54,12 @@ namespace CloudflareDnsUpdater.HostedServices
             {
                 hostApplicationLifetime.StopApplication();
             }
+            logger.LogInformation($"{nameof(CloudflareDnsUpdater)}->{nameof(StartAsync)} Ended: {DateTime.Now}");
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
         }
     }
 }
