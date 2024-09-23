@@ -22,7 +22,7 @@ namespace CloudflareDnsUpdater.Services
             };
         }
 
-        public async Task<ListDnsRecordsResponse?> GetDnsRecords(string zoneId)
+        public async Task<ListDnsRecordsResponse> GetDnsRecords(string zoneId)
         {
             string relativePath = $"zones/{zoneId}/dns_records";
             var client = httpClientFactory.CreateClient("Cloudflare");
@@ -33,7 +33,7 @@ namespace CloudflareDnsUpdater.Services
             return await response.Content.ReadFromJsonAsync<ListDnsRecordsResponse>(jsonSerializerOptions);
         }
 
-        public async Task<UpdateDnsRecordResponse?> UpdateDnsRecord(string zoneId, DnsRecord dnsRecord)
+        public async Task<UpdateDnsRecordResponse> UpdateDnsRecord(string zoneId, DnsRecord dnsRecord)
         {
             string relativePath = $"zones/{zoneId}/dns_records/{dnsRecord.Id}",
                 comment = $"Last Modified: CloudflareDnsUpdater ({DateTime.Now})";

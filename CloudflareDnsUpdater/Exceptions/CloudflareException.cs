@@ -8,6 +8,6 @@ namespace CloudflareDnsUpdater.Exceptions
 {
     public class CloudflareException : Exception
     {
-        public CloudflareException(string? message) : base(message) { }
+        public CloudflareException(string message) : base(message) { }
     }
 }
