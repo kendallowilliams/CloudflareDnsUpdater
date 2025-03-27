@@ -50,8 +50,11 @@ namespace CloudflareDnsUpdater.Services
 
             if (needsUpdate)
             {
-                var dnsRecord = dnsRecords.FirstOrDefault() ?? new DnsRecord() { Content = ipAddress };
-                var updateDnsRecordResponse = await cloudflareService.UpdateDnsRecord(settings.ZoneId, dnsRecord);
+                var dnsRecord = dnsRecords.First();
+                var updateDnsRecordResponse = default(UpdateDnsRecordResponse);
+
+                dnsRecord.Content = ipAddress;
+                updateDnsRecordResponse = await cloudflareService.UpdateDnsRecord(settings.ZoneId, dnsRecord);
 
                 if (updateDnsRecordResponse is null)
                 {
