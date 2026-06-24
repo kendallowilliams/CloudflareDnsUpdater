@@ -1,6 +1,5 @@
 ﻿using CloudflareDnsUpdater.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System.Net;
 
 namespace CloudflareDnsUpdater.Services
 {
